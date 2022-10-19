@@ -1,0 +1,30 @@
+global:
+  sendAnonymousUsage: false
+  checkNewVersion: false
+
+api:
+  insecure: true
+  dashboard: true
+  debug: true
+
+pilot:
+  dashboard: true
+
+log:
+  #filePath: "/etc/traefik/applog.log"
+  level: DEBUG
+
+providers:
+  docker:
+    endpoint: unix:///var/run/docker.sock
+    exposedByDefault: false
+    watch: true
+    swarmMode: false
+
+  file:
+    directory: "/etc/traefik/dynamic"
+    watch: true
+
+entryPoints:
+  web:
+    address: ":80"

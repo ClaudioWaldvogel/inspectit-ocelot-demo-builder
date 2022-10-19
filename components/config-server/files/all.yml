@@ -1,0 +1,22 @@
+inspectit:
+  config:
+    http:
+      frequency: 5s
+  logging:
+    debug: false
+  exporters:
+    tracing:
+      jaeger:
+        enabled: ENABLED
+        endpoint: http://jaeger:14268/api/traces
+        protocol: http/thrift
+    metrics:
+      prometheus:
+        enabled: ENABLED
+        port: 9091
+      influx:
+        enabled: ENABLED
+        url: http://influxdb:8086
+  tags:
+    extra:
+      'stage': 'preprod'
