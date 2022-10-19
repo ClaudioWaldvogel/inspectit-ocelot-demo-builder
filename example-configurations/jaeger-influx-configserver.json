@@ -2,7 +2,7 @@
   "name": "jaeger-influx-configserver",
   "domain_prefix": "demo1",
   "domain_postfix": "test",
-  "agent_location": "../../inspectit-ocelot/inspectit-ocelot-agent/build/inspectit-ocelot-agent-SNAPSHOT.jar",
+  "agent_location": "<path>/inspectit-ocelot-agent-SNAPSHOT.jar",
   "traefik": {
     "version": "2.8",
     "dashboard_port": 8088,
