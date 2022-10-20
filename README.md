@@ -19,7 +19,6 @@ To enabled proper DNS resolution it is required to install dnsmasq and setup a r
 
 ## Known limitations
 - Currently only tested on MACOS
-- Path names must not contain blanks
 
 ## Prerequisites 
 - Ensure realpath bash function is available
