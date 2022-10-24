@@ -44,7 +44,7 @@ function build_trading_demo_app(){
   echo "Build Trading Demo App"
   cd "${INSPECTIT_ROOT_FOLDER}/trading-demo-application" || exit
   ./gradlew bootJar
-  docker buildx build --load --platform linux/arm64  -t inspectit/trading-demo-app:SNAPSHOT .
+  docker buildx build --load --platform linux/arm64  -t inspectit/trading-demo:SNAPSHOT .
 }
 
 

@@ -274,7 +274,7 @@ function attach_trading_app(){
 /bin/cat <<EOM >>"${docker_compose_file}"
 
   trading-app-frontend:
-    image: inspectit/trading-demo-app:${version}
+    image: inspectit/trading-demo:${version}
     container_name: "${environment_domain_prefix}-trading-app-frontend"
     networks:
       - "$docker_network_name"
@@ -295,7 +295,7 @@ function attach_trading_app(){
 
 
   trading-app-backend:
-    image: inspectit/trading-demo-app:${version}
+    image: inspectit/trading-demo:${version}
     container_name: "${environment_domain_prefix}-trading-app-backend"
     networks:
       - "$docker_network_name"
