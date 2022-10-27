@@ -208,7 +208,7 @@ function attach_influx(){
       - "8086"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.${environment_domain_prefix}-influx.rule=Host(\`${environment_domain_prefix}.influx.${environment_domain_postfix}\`)"
+      - "traefik.http.routers.${environment_domain_prefix}-influx.rule=Host(\`${environment_domain_prefix}.influxdb.${environment_domain_postfix}\`)"
       - "traefik.http.routers.${environment_domain_prefix}-influx.entrypoints=web"
       - "traefik.http.routers.${environment_domain_prefix}-influx.service=${environment_domain_prefix}-influx"
       - "traefik.http.services.${environment_domain_prefix}-influx.loadbalancer.server.port=8086"
@@ -322,6 +322,60 @@ EOM
 }
 
 
+function attach_otel_collector() {
+
+  otel_collector_enabled=$(jq -r '.otel_collector.enabled' "$config_file_name")
+  if [ "$otel_collector_enabled" = true ] ; then
+      version=$(jq -r '.otel_collector.version' "$config_file_name")
+      cp -r "${components_directory}/otel-collector" "$environment_directory/"
+
+/bin/cat <<EOM >>"${docker_compose_file}"
+
+  otel-collector:
+    image: otel/opentelemetry-collector:${version}
+    container_name: "${environment_domain_prefix}-otel-collector"
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    networks:
+      - "$docker_network_name"
+    volumes:
+      - ./otel-collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "1888:1888"   # pprof extension
+      - "8888:8888"   # Prometheus metrics exposed by the collector
+      - "8889:8889"   # Prometheus exporter metrics
+      - "13133:13133" # health_check extension
+      - "4317:4317"   # OTLP gRPC receiver
+      - "4318:4318"   # OTLP http receiver
+      - "55679:55679" # zpages extension
+EOM
+  fi
+}
+
+function attach_telegraf() {
+
+  telegraf_enabled=$(jq -r '.telegraf.enabled' "$config_file_name")
+  if [ "$telegraf_enabled" = true ] ; then
+      version=$(jq -r '.telegraf.version' "$config_file_name")
+      cp -r "${components_directory}/telegraf" "$environment_directory/"
+
+/bin/cat <<EOM >>"${docker_compose_file}"
+
+  telegraf:
+    image: telegraf:1.24.2
+    container_name: "${environment_domain_prefix}-telegraf"
+    networks:
+      - "$docker_network_name"
+    volumes:
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
+    ports:
+      - "43177:4317"   # OTLP gRPC receiver
+      - "8125:8125"   # StatsD
+      - "8092:8092"   # UDP
+      - "8094:8094"   # TCP
+EOM
+  fi
+}
+
 function attach_grafana() {
 
   grafana_enabled=$(jq -r '.grafana.enabled' "$config_file_name")
@@ -362,8 +416,6 @@ function attach_grafana() {
       - "traefik.http.services.${environment_domain_prefix}-grafana.loadbalancer.server.port=3000"
 EOM
   fi
-
-
 }
 
 function start_compose_file(){
@@ -424,6 +476,8 @@ function build_environment() {
   attach_jaeger
   attach_trading_app
   attach_grafana
+  attach_otel_collector
+  attach_telegraf
 
 }
 

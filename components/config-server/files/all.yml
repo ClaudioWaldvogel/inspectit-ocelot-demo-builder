@@ -7,16 +7,24 @@ inspectit:
   exporters:
     tracing:
       jaeger:
-        enabled: ENABLED
+        enabled: DISABLED
         endpoint: http://jaeger:14268/api/traces
         protocol: http/thrift
+      otlp:
+        enabled: ENABLED
+        endpoint: http://otel-collector:4317
+        protocol: grpc
     metrics:
       prometheus:
-        enabled: ENABLED
+        enabled: DISABLED
         port: 9091
       influx:
-        enabled: ENABLED
+        enabled: DISABLED
         url: http://influxdb:8086
+      otlp:
+        enabled: ENABLED
+        endpoint: http://otel-collector:4317
+        protocol: grpc
   tags:
     extra:
-      'stage': 'preprod'
+      'stage': 'prod'

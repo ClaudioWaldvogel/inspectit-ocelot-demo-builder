@@ -1,0 +1,50 @@
+receivers:
+  jaeger:
+    protocols:
+      grpc:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+processors:
+  batch:
+
+exporters:
+  logging:
+    loglevel: debug
+    sampling_initial: 5
+    sampling_thereafter: 200
+  jaeger:
+    endpoint: "jaeger:14250"
+    tls:
+      insecure: true
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+
+  otlp/influxdb:
+    endpoint: telegraf:4317
+    tls:
+      insecure: true
+
+
+extensions:
+  health_check:
+  pprof:
+  zpages:
+
+service:
+  extensions: [health_check,pprof,zpages]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [jaeger]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [prometheus,otlp/influxdb]
+   # logs:
+   #   receivers: [otlp]
+   #   processors: [batch]
+   #   exporters: [otlp]

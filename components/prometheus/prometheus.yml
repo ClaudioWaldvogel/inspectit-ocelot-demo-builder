@@ -11,4 +11,5 @@ scrape_configs:
     # scheme defaults to 'http'.
 
     static_configs:
-      - targets: ['trading-app-frontend:9091', 'trading-app-backend:9091']
+      #- targets: ['trading-app-frontend:9091', 'trading-app-backend:9091','otel-collector:8889']
+      - targets: ['otel-collector:8889']
